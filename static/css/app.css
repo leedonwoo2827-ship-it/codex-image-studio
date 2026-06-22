@@ -14,6 +14,9 @@
 }
 
 * { box-sizing: border-box; }
+/* `hidden` 속성이 항상 우선(.modal{display:flex} 등 클래스 display 를 이김).
+   이게 없으면 hidden 토글이 안 먹어 모달/뷰어가 안 닫힌다. */
+[hidden] { display: none !important; }
 html, body { height: 100%; margin: 0; }
 body {
   font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;

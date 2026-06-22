@@ -351,14 +351,18 @@ async function saveSettings() {
   };
   const key = $("geminiKey").value.trim();
   if (key) patch.gemini_api_key = key;
+  const btn = $("settingsSave");
+  busy(btn, true, "저장 중…");
   try {
     state.settings = await api.saveSettings(patch);
-    fillSizeSelect($("sizeSelect"), state.settings.size_choices, state.settings.default_size);
-    $("settingsMsg").textContent = "저장됨 ✓";
-    await refreshAuthChip();
-    $("geminiFields").hidden = state.settings.engine !== "gemini";
-    setTimeout(() => ($("settingsModal").hidden = true), 600);
-  } catch (e) { $("settingsMsg").textContent = errMsg(e); }
+    try { fillSizeSelect($("sizeSelect"), state.settings.size_choices, state.settings.default_size); } catch {}
+    $("settingsModal").hidden = true;      // 저장 즉시 닫기
+    toast("설정을 저장했습니다 ✓");
+    refreshAuthChip();                      // 비차단 갱신
+    loadImages();
+  } catch (e) {
+    $("settingsMsg").textContent = errMsg(e);
+  } finally { busy(btn, false); }
 }
 
 // ── 유틸 ───────────────────────────────────────────────────

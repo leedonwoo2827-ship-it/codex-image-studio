@@ -57,8 +57,21 @@ def _open_browser():
         pass
 
 
+def _port_in_use(host: str, port: int) -> bool:
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(0.5)
+        return s.connect_ex((host, port)) == 0
+
+
 if __name__ == "__main__":
-    # 브라우저는 서버가 뜬 직후 한 번만 연다(reload 비활성 시).
+    # 이미 다른 인스턴스가 떠 있으면(포트 사용중) 무서운 10048 에러 대신
+    # 그냥 브라우저만 열고 깔끔히 종료한다(더블클릭 사용자 친화).
+    if _port_in_use(HOST, PORT):
+        print(f"\n  이미 실행 중입니다 → 브라우저를 엽니다: http://{HOST}:{PORT}/\n")
+        _open_browser()
+        raise SystemExit(0)
+
     threading.Timer(1.2, _open_browser).start()
     print(f"\n  로컬 이미지 스튜디오 → http://{HOST}:{PORT}/\n")
     uvicorn.run(app, host=HOST, port=PORT, log_level="info")
