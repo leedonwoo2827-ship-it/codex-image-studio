@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
 echo ============================================================
-echo   Local Image Studio - Setup
+echo   Local Image Studio - Setup (double-click)
 echo ============================================================
 echo.
 
@@ -12,47 +12,55 @@ set "PY="
 where py >nul 2>nul && set "PY=py -3"
 if not defined PY ( where python >nul 2>nul && set "PY=python" )
 if not defined PY (
-  echo [ERROR] Python 3.10+ is required.
-  echo         Install from https://www.python.org/downloads/ and re-run.
-  echo         Be sure to check "Add Python to PATH" during install.
+  echo [ERROR] Python 3.10+ not found.
+  echo         Install it ONCE from https://www.python.org/downloads/
+  echo         and CHECK "Add Python to PATH", then double-click setup.bat again.
   pause & exit /b 1
 )
-echo [OK] Using Python: %PY%
+echo [OK] Python: %PY%
 
-REM 2) Create virtual environment
+REM 2) Create venv
 if not exist "venv\Scripts\python.exe" (
-  echo [1/3] Creating virtual environment "venv" ...
+  echo [1/4] Creating virtual environment "venv" ...
   %PY% -m venv venv
   if errorlevel 1 ( echo [ERROR] Failed to create venv & pause & exit /b 1 )
 ) else (
-  echo [1/3] venv already exists - skipping
+  echo [1/4] venv already exists - skipping
 )
 set "VPY=venv\Scripts\python.exe"
 
-REM 3) Install dependencies
-echo [2/3] Installing dependencies ... (first run may take 1-2 minutes)
+REM 3) Install Python dependencies
+echo [2/4] Installing Python dependencies ... (first run may take 1-2 minutes)
 "%VPY%" -m pip install --upgrade pip
 "%VPY%" -m pip install -r requirements.txt
-if errorlevel 1 (
-  echo [ERROR] Dependency install failed. Check the messages above.
-  pause & exit /b 1
-)
+if errorlevel 1 ( echo [ERROR] pip install failed. See messages above. & pause & exit /b 1 )
 
-REM 4) Check codex CLI / ChatGPT login (required for keyless image generation)
-echo [3/3] Checking codex CLI / ChatGPT login ...
+REM 4) Ensure codex CLI (keyless image engine)
+echo [3/4] Checking codex CLI ...
 where codex >nul 2>nul
 if errorlevel 1 (
-  echo.
-  echo   [NOTE] codex CLI not found. For keyless image generation, install and log in:
-  echo            npm i -g @openai/codex
-  echo            codex login
-  echo   ^(Or switch to the Gemini free-key engine in the in-app Settings.^)
-) else (
-  if exist "%USERPROFILE%\.codex\auth.json" (
-    echo   [OK] codex installed + login credentials found.
-  ) else (
-    echo   [NOTE] codex installed. If not logged in yet, run "codex login" in a terminal.
+  where npm >nul 2>nul
+  if errorlevel 1 (
+    echo [ERROR] Node.js/npm not found - needed to install the codex CLI.
+    echo         Install it ONCE from https://nodejs.org/  then double-click setup.bat again.
+    echo         ^(Alternatively, use the Gemini free-key engine in the app Settings.^)
+    pause & exit /b 1
   )
+  echo   codex not found - installing via npm ^(global^) ...
+  call npm i -g @openai/codex
+  if errorlevel 1 ( echo [ERROR] codex install failed. & pause & exit /b 1 )
+) else (
+  echo   [OK] codex CLI found.
+)
+
+REM 5) ChatGPT login (per-PC, one time)
+echo [4/4] Checking ChatGPT login ...
+if exist "%USERPROFILE%\.codex\auth.json" (
+  echo   [OK] Already logged in on this PC.
+) else (
+  echo   Not logged in - opening ChatGPT login in your browser ...
+  echo   ^(Sign in with your ChatGPT account, then this window continues.^)
+  call codex login
 )
 
 echo.
