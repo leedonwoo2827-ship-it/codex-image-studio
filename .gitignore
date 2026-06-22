@@ -9,3 +9,8 @@ data/settings.json
 data/images/
 *.tmp.*
 .DS_Store
+
+# 내부 자료/초안 — GitHub 업로드 안 함
+_assets/
+_context/
+_ocntext/
