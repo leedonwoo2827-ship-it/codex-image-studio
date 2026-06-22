@@ -430,6 +430,9 @@ function wire() {
   $("mergeClose").addEventListener("click", () => ($("mergeModal").hidden = true));
   $("mergeRun").addEventListener("click", runMerge);
 
+  // 매뉴얼 (새 탭)
+  $("manualBtn").addEventListener("click", () => window.open("/manual.html", "_blank"));
+
   // 설정
   $("settingsBtn").addEventListener("click", openSettings);
   $("settingsClose").addEventListener("click", () => ($("settingsModal").hidden = true));
