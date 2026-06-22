@@ -26,11 +26,17 @@ function busy(btn, on, label) {
 }
 
 // ── 설정 / 크기 선택 ───────────────────────────────────────
+const SIZE_LABELS = {
+  "auto": "자동",
+  "1024x1024": "1024×1024 (1:1 정사각)",
+  "1536x1024": "1536×1024 (3:2 가로)",
+  "1024x1536": "1024×1536 (2:3 세로)",
+};
 function fillSizeSelect(sel, sizes, val) {
   sel.innerHTML = "";
   sizes.forEach((s) => {
     const o = document.createElement("option");
-    o.value = s; o.textContent = s === "auto" ? "자동" : s;
+    o.value = s; o.textContent = SIZE_LABELS[s] || s;
     if (s === val) o.selected = true;
     sel.appendChild(o);
   });
