@@ -1,4 +1,6 @@
-# 로컬 이미지 스튜디오 (Local Image Studio)
+# ChatGPT 이미지 스튜디오 (codex-image-studio)
+
+> **자연어로 생성·수정·병합하는 로컬 웹앱 — API 키 없이 내 ChatGPT 구독으로 (gpt-image-2)**
 
 GPT 입력창처럼 자연어로 **이미지를 생성·수정·병합**하는 로컬 웹앱.
 **API 키 없이** `codex login`(Sign in with ChatGPT) 한 번으로, 본인 ChatGPT 구독
