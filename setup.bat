@@ -31,7 +31,6 @@ set "VPY=venv\Scripts\python.exe"
 
 REM 3) Install Python dependencies
 echo [2/4] Installing Python dependencies ... (first run may take 1-2 minutes)
-"%VPY%" -m pip install --upgrade pip
 "%VPY%" -m pip install -r requirements.txt
 if errorlevel 1 ( echo [ERROR] pip install failed. See messages above. & pause & exit /b 1 )
 
