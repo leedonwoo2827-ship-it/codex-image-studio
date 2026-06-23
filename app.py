@@ -17,7 +17,7 @@ from contextlib import asynccontextmanager  # noqa: E402
 
 import uvicorn  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
-from fastapi.responses import FileResponse  # noqa: E402
+from fastapi.responses import FileResponse, Response  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 
 from core.constants import HOST, PORT, STATIC_DIR  # noqa: E402
@@ -45,6 +45,13 @@ app.include_router(image_router)
 @app.get("/")
 async def index():
     return FileResponse(STATIC_DIR / "index.html")
+
+
+@app.get("/favicon.ico")
+async def favicon():
+    # 브라우저가 자동 요청하는 탭 아이콘. 별도 아이콘이 없으므로 204로 조용히 응답
+    # (이게 없으면 콘솔에 무해한 404 로그가 남는다).
+    return Response(status_code=204)
 
 
 app.mount("/", StaticFiles(directory=str(STATIC_DIR)), name="static")
