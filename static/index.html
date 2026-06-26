@@ -100,9 +100,14 @@
 <div class="modal" id="mergeModal" hidden>
   <div class="modal-box">
     <div class="modal-head"><h2>＋ 가져오기 / 병합</h2><button class="icon-btn" id="mergeClose">✕</button></div>
-    <p class="hint">병합할 이미지를 선택하고(여러 장 가능) 지시문을 입력하면 한 장으로 합성합니다.</p>
+    <p class="hint">스튜디오 이미지를 선택하거나 PC에서 이미지를 추가하고(여러 장 가능), 지시문을 입력하면 한 장으로 합성합니다. 참조 1장만 올려 "원본 그대로 사용해줘"로 가져오기도 가능합니다.</p>
+    <div class="upload-row">
+      <button class="ghost-btn" id="mergeUploadBtn" type="button">📁 PC에서 이미지 추가</button>
+      <input type="file" id="mergeFileInput" accept="image/*" multiple hidden>
+    </div>
+    <div class="picker" id="mergeUploadList" hidden></div>
     <div class="picker" id="mergePicker"></div>
-    <textarea id="mergePrompt" rows="2" placeholder="예: 두 이미지를 자연스럽게 한 장면으로 합성해줘"></textarea>
+    <textarea id="mergePrompt" rows="2" placeholder="예: 두 이미지를 자연스럽게 한 장면으로 합성해줘 / 첫 번째 이미지를 원본 그대로 사용해줘"></textarea>
     <div class="modal-foot">
       <span class="sel-count" id="mergeCount">선택: 0</span>
       <button class="primary-btn" id="mergeRun">병합 생성</button>

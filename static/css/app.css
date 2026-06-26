@@ -224,6 +224,24 @@ button, input, select, textarea { font-family: inherit; color: inherit; }
 .pick.sel { border-color: var(--blue); }
 .pick .order { position: absolute; top: 4px; right: 4px; background: var(--blue); color:#fff; font-size: 11px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: none; align-items: center; justify-content: center; }
 .pick.sel .order { display: flex; }
+/* PC 업로드: 스튜디오 선택(파란 번호)과 다르게 오렌지 테두리 + 'PC' 뱃지 + 제거 버튼 */
+.upload-row { margin: 2px 0 4px; }
+.ghost-btn {
+  background: var(--ice); border: 1.5px dashed var(--ice-2); color: #3C4654;
+  border-radius: 11px; padding: 9px 14px; font-size: 13px; cursor: pointer;
+}
+.ghost-btn:hover { background: #fff; border-color: #E8732A; color: #E8732A; }
+.pick.upload { border-color: #E8732A; cursor: default; }
+.pick.upload .badge-pc {
+  position: absolute; top: 4px; left: 4px; background: #E8732A; color: #fff;
+  font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 999px; letter-spacing: .3px;
+}
+.pick.upload .rm {
+  position: absolute; top: 3px; right: 3px; background: rgba(24,27,33,.72); color: #fff;
+  border: none; width: 18px; height: 18px; border-radius: 50%; font-size: 11px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.pick.upload .rm:hover { background: #E8732A; }
 .auth-status { font-size: 12.5px; padding: 12px 14px; border-radius: 12px; background: var(--ice); line-height: 1.6; color: #3C4654; }
 .auth-status code { background: #fff; border: 1px solid var(--ice-2); border-radius: 5px; padding: 1px 5px; font-size: 11.5px; }
 .sel-count { font-size: 12.5px; color: var(--muted); }

@@ -271,8 +271,11 @@ function buildMaskComposite() {
 
 // ── 병합 모달 ──────────────────────────────────────────────
 let mergeSel = [];
+let mergeUploads = []; // PC에서 추가한 이미지(data URL 문자열)
 function openMerge() {
   mergeSel = [];
+  mergeUploads = [];
+  renderUploads();
   const picker = $("mergePicker");
   picker.innerHTML = "";
   state.images.forEach((img) => {
@@ -302,17 +305,57 @@ function refreshMergeOrders() {
     const idx = mergeSel.indexOf(Number(d.dataset.id));
     d.querySelector(".order").textContent = idx >= 0 ? idx + 1 : "";
   });
-  $("mergeCount").textContent = "선택: " + mergeSel.length;
+  $("mergeCount").textContent =
+    "선택: " + mergeSel.length + (mergeUploads.length ? ` · PC ${mergeUploads.length}` : "");
+}
+
+// PC에서 추가한 이미지: 스튜디오 선택(파란 번호 뱃지)과 다르게 오렌지 'PC' 뱃지 + 제거 버튼으로 표식
+function renderUploads() {
+  const list = $("mergeUploadList");
+  if (!list) return;
+  list.innerHTML = "";
+  list.hidden = mergeUploads.length === 0;
+  mergeUploads.forEach((url, i) => {
+    const d = document.createElement("div");
+    d.className = "pick upload";
+    d.innerHTML = `<img src="${url}"><span class="badge-pc">PC</span><button class="rm" title="제거">✕</button>`;
+    d.querySelector(".rm").addEventListener("click", () => {
+      mergeUploads.splice(i, 1);
+      renderUploads();
+      refreshMergeOrders();
+    });
+    list.appendChild(d);
+  });
+}
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(fr.result);
+    fr.onerror = () => reject(new Error("파일 읽기 실패"));
+    fr.readAsDataURL(file);
+  });
+}
+async function handleMergeFiles(fileList) {
+  const files = Array.from(fileList || []).filter((f) => f.type.startsWith("image/"));
+  if (!files.length) return;
+  for (const f of files) {
+    try { mergeUploads.push(await readFileAsDataURL(f)); }
+    catch { toast(`${f.name} 읽기 실패`, true); }
+  }
+  renderUploads();
+  refreshMergeOrders();
 }
 async function runMerge() {
   const prompt = $("mergePrompt").value.trim();
   if (!prompt) { toast("병합 지시문을 입력하세요.", true); return; }
-  if (!mergeSel.length) { toast("이미지를 1장 이상 선택하세요.", true); return; }
+  if (!mergeSel.length && !mergeUploads.length) {
+    toast("이미지를 1장 이상 선택하거나 PC에서 추가하세요.", true); return;
+  }
   const btn = $("mergeRun");
   busy(btn, true);
   try {
     const img = await api.compose({
-      prompt, source_ids: mergeSel,
+      prompt, source_ids: mergeSel, extra_images: mergeUploads,
       project_id: /^\d+$/.test(state.view) ? Number(state.view) : null,
     });
     $("mergeModal").hidden = true;
@@ -429,6 +472,11 @@ function wire() {
   $("plusBtn").addEventListener("click", openMerge);
   $("mergeClose").addEventListener("click", () => ($("mergeModal").hidden = true));
   $("mergeRun").addEventListener("click", runMerge);
+  $("mergeUploadBtn").addEventListener("click", () => $("mergeFileInput").click());
+  $("mergeFileInput").addEventListener("change", (e) => {
+    handleMergeFiles(e.target.files);
+    e.target.value = ""; // 같은 파일 다시 선택 가능하도록 초기화
+  });
 
   // 매뉴얼 (새 탭)
   $("manualBtn").addEventListener("click", () => window.open("/manual.html", "_blank"));
